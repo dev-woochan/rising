@@ -1,2 +1,2 @@
 # rising
-오른다!!
+# rising

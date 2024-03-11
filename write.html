@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="write.css" type="text/css">
+    <title>국내주식 글쓰기</title>
+</head>
+
+<body>
+
+    <header>
+        <div class="header_inner">
+            <div class="logo_area">
+                <a href="/risingproject/home.php">
+                    <h1>오른다!!
+                    </h1>
+                    <img src="192.168.0.10/usr/local/apache-2.4/htdocs/risingproject/rise_logo.png" alt="오른다 로고">
+                </a>
+
+            </div>
+            <div class="right_area">
+                <a href="login.php">
+                    <span class="button">
+                        로그인
+                    </span>
+                </a>
+                <a href="signin.html">
+                    <span class="button">
+                        회원가입
+                    </span>
+                </a>
+            </div>
+        </div>
+        </div>
+
+        <nav class="gnb">
+            <div class="gnb_inner">
+                <div class="nav_board">
+                    <a href="/risingproject/home.php">홈</a>
+                </div>
+                <div class="nav_board">
+                    <a href="/risingproject/board_koreaStock.php">국내주식</a>
+                </div>
+                <div class="nav_board">
+                    <a href="/risingproject/board_usStock.php">미국주식</a>
+                </div>
+                <div class="nav_board">
+                    <a>암호화폐</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <h2>
+            글작성
+        </h2>
+        <form action="/risingproject/board_koreaStock.php" class="write_form" method="post">
+            <div class="form_wrap">
+
+                <div class="write_stock">
+                    <label>제목</label><input type="text" class="write_textarea" name="title">
+                </div>
+                <div class="write_stock">
+                    <label>종목명</label><input type="text" class="write_textarea" name="stock">
+                </div>
+                <div class="write_button_left">
+                    <input type="button" value="오른다" id="button_increase" class="button_select">
+                    <input type="button" value="내린다" id="button_decrease" class="button_select">
+                    <input type="hidden" name="select" id="select">
+                    <input type="hidden" name="date" id="date">
+                </div>
+                <script>
+                    const button_increase = document.getElementById('button_increase');
+                    const button_decrease = document.getElementById('button_decrease');
+                    const select = document.getElementById('select');
+                    const date = document.getElementById('date');
+
+                    //현재 날짜 호출해서 date에 담음
+                    function getToday() {
+                        var date = new Date();
+                        var year = date.getFullYear();
+                        var month = ("0" + (1 + date.getMonth())).slice(-2);
+                        var day = ("0" + date.getDate()).slice(-2);
+
+                        return year + "-" + month + "-" + day;
+                    }
+
+                    date.value = getToday();
+
+                    button_increase.onclick = function () {
+                        button_increase.style.backgroundColor = '#FF5c5c';
+                        button_decrease.style.backgroundColor = '#cecdce';
+                        select.value = "오른다👆";
+                    }
+                    button_decrease.onclick = function () {
+                        button_decrease.style.backgroundColor = 'blue';
+                        button_increase.style.backgroundColor = '#cecdce';
+                        select.value = "내린다👇";
+                    }
+
+
+                </script>
+                <div>
+                    <input type="text" class="main_text" name="content">
+                </div>
+                <div class="write_button_right">
+                    <input type="button" value="취소" onclick="history.back(-1)">
+                    <input type="submit" value="등록">
+                </div>
+            </div>
+
+        </form>
+
+    </main>
+    <footer>
+        <div> Copyright 2024. KimChanWoo all rights reserved.
+
+        </div>
+    </footer>
+
+
+
+</body>
+
+</html>
