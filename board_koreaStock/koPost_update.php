@@ -43,21 +43,16 @@ WHERE koPost.id = ($post_id) ";
 $result = mysqli_query($mysqli,$sql);
 $result_array = mysqli_fetch_array($result);
 
+session_start(); //세션 시동걸어주기 
 
-
-
-
-$loadIdSql = "SELECT login.id, user.id , user.name
-FROM login
-JOIN user ON login.id = user.id";
-$loginResult = mysqli_query($mysqli,$loadIdSql);
-$login_array = mysqli_fetch_array($loginResult);
-if($login_array['name']){
-    $user_name = $login_array['name'] ;
-    $user_id = $login_array['id'];
+if(isset($_SESSION['login_id'])){ //세션에 아이디가 있어야댐
+    $user_name = $_SESSION['login_name'] ;
+    $user_id = $_SESSION['login_id'];
+} else{
+    $user_name  ="Guest"; //로그인 값없을시 안전하게 user_name사용하기위해서 예외처리해줌 
 }
+//아이디 불러오기 끝
 
-// 로그인 아이디 불러오기 =>세션으로 변경예정 ?? 
 ?>
     <header>
         <div class="header_inner">
@@ -72,7 +67,7 @@ if($login_array['name']){
             </div>
             <div class="right_area">
             <?php 
-                if($user_name){
+                if($user_name != "Guest"){
                     echo $user_name , " 님 환영합니다 ". '<form action="http://192.168.101.129/risingproject/user/mypage.php" method="POST">
                     <input type="submit" value="마이페이지">
                     </form>

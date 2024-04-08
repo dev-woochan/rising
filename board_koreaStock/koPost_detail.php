@@ -4,15 +4,15 @@ include '../dbconfig.php';
 
 $post_num = $_GET["id"]; // a태그에 query 를 넣어서 get요청을 보냄 
 
-$loadIdSql = "SELECT login.id, user.id , user.name
-FROM login
-JOIN user ON login.id = user.id";
-$loginResult = mysqli_query($mysqli,$loadIdSql);
-$login_array = mysqli_fetch_array($loginResult);
-if($login_array['name']){
-    $user_name = $login_array['name'] ;
-    $user_id = $login_array['id'];
+session_start(); //세션 시동걸어주기 
+
+if(isset($_SESSION['login_id'])){ //세션에 아이디가 있어야댐
+    $user_name = $_SESSION['login_name'] ;
+    $user_id = $_SESSION['login_id'];
+} else{
+    $user_name  ="Guest"; //로그인 값없을시 안전하게 user_name사용하기위해서 예외처리해줌 
 }
+//아이디 불러오기 끝
 
 $sql = "SELECT koPost.create_time,koPost.stockName ,title, user.name, content, watchCnt, likeCnt, riseSelect, goalDate, postPrice , koStock.code, image
 FROM koPost  
@@ -67,7 +67,7 @@ $commentResult = mysqli_query($mysqli,$commentSql);
             </div>
             <div class="right_area">
             <?php 
-                if($user_name){
+                if($user_name != "Guest"){
                     echo $user_name , " 님 환영합니다 ". '<form action="../user/mypage.php" method="POST">
                     <input type="submit" value="마이페이지">
                     </form>
