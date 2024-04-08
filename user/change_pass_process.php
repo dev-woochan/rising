@@ -2,16 +2,26 @@
 //db 실행 
 include '../dbconfig.php';
 
-$loadIdSql = "SELECT login.id, user.id , user.password
-FROM login
-JOIN user ON login.id = user.id";
-$loginResult = mysqli_query($mysqli,$loadIdSql);
-$login_array = mysqli_fetch_array($loginResult);
-if($login_array['id']){
-    $user_pass = $login_array['password'] ;
-    $user_id = $login_array['id'];
+session_start(); //세션 시동걸어주기 
+
+if(isset($_SESSION['login_id'])){ //세션에 아이디가 있어야댐
+    $user_name = $_SESSION['login_name'] ;
+    $user_id = $_SESSION['login_id'];
+} else{
+    $user_name  ="Guest"; //로그인 값없을시 안전하게 user_name사용하기위해서 예외처리해줌 
 }
 //아이디 불러오기 끝
+
+
+$loadIdSql = "SELECT user.password
+FROM user
+WHERE id = '$user_id'";
+
+$loginResult = mysqli_query($mysqli,$loadIdSql);
+$login_array = mysqli_fetch_array($loginResult);
+if($login_array['password']){
+    $user_pass = $login_array['password'] ;
+}
 
     $pass = $_POST['password'];
     $newPass = $_POST['new_password'];

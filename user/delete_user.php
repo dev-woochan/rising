@@ -3,19 +3,23 @@ include '../dbconfig.php';
 
 $passwordinput = $_POST['password'];
 
-$loadIdSql = "SELECT id FROM login";
-$loginResult = mysqli_query($mysqli,$loadIdSql);
-$login_array = mysqli_fetch_array($loginResult);
+session_start(); //세션 시동걸어주기 
 
-$login_id = $login_array['id'];
+if(isset($_SESSION['login_id'])){ //세션에 아이디가 있어야댐
+    $user_name = $_SESSION['login_name'] ;
+    $login_id = $_SESSION['login_id'];
+} else{
+    $user_name  ="Guest"; //로그인 값없을시 안전하게 user_name사용하기위해서 예외처리해줌 
+}
+//아이디 불러오기 끝
 
-$loadUser = "SELECT id, password FROM user WHERE id = '$login_id'";
+$loadUser = "SELECT id, password FROM user WHERE id = '$login_id'"; //세션에 있는 아이디로 회원정보 로드 
 $result = mysqli_query($mysqli,$loadUser);
 $result_array = mysqli_fetch_array($result);
 $password = $result_array['password'];
 
 if($password == $passwordinput){
-    $update_postId = "UPDATE koPost SET user_id = 11 WHERE user_id ='$login_id' ";
+    $update_postId = "UPDATE koPost SET user_id = 11 WHERE user_id ='$login_id'"; // 탈퇴한 회원들이라는 아이디를 만들어 탈퇴한회원은 다 탈퇴한회원으로 나오도록 변경
 $update_commentId = "UPDATE comment SET user_id = 11 WHERE user_id ='$login_id'";
 mysqli_query($mysqli,$update_commentId);
 mysqli_query($mysqli,$update_postId);

@@ -53,16 +53,10 @@
 
             <div>
                 <div class="btn-signin">
-                    <span>비밀번호찾기</span><span>회원가입</span>
+                    <span>비밀번호찾기</span>
+                    <a href="signin.html">회원가입</a>
                 </div>
-                <div>
-                    <button type="submit" class="login_kakao">
-                        <span style="visibility: hidden;">카카오 로그인</span></button>
-                </div>
-                <div>
-                    <button type="submit"><span>네이버 로그인</span></button>
-                </div>
-
+            
             </div>
         </div>
 

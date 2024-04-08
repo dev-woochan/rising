@@ -8,7 +8,7 @@ header('Content-Type: application/json; charset=UTF-8');
 $json_data = file_get_contents('php://input');
 $data = json_decode($json_data, true);
 
-session_start(); //세션 시동걸어주기 
+session_start(); //세션 연동
 
 if(isset($_SESSION['login_id'])){ //세션에 아이디가 있어야댐
     $user_name = $_SESSION['login_name'] ;
