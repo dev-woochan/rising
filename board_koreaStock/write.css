@@ -236,3 +236,7 @@ a {
 #button_decrease:hover {
     background-color: blue;
 }
+
+#stockName {
+    text-align: start;
+}

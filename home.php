@@ -1,10 +1,28 @@
+<?php
+include 'dbconfig.php';
 
-<?php 
-$login_id = $_POST['id'];
-$login_pass = $_POST['pw'];
-$login_name = "김찬우";
+session_start(); //세션 시동걸어주기 
+
+if(isset($_SESSION['login_id'])){ //세션에 아이디가 있어야댐
+    $user_name = $_SESSION['login_name'] ;
+    $user_id = $_SESSION['login_id'];
+} else{
+    $user_name  ="Guest"; //로그인 값없을시 안전하게 user_name사용하기위해서 예외처리해줌 
+}
+//아이디 불러오기 끝
+
+
+$sql = "SELECT koPost.id, user.name, koPost.create_time, koPost.title, koPost.riseSelect, koPost.stockName, koPost.watchCnt, koPost.likeCnt, LPAD(koStock.code, 6, '0') AS stockCode
+FROM koPost
+JOIN user ON koPost.user_id = user.id
+JOIN koStock ON koPost.stockName = koStock.name
+order by koPost.id desc limit 5" ;
+//게시글 불러오기 
+$loadPost = mysqli_query($mysqli,$sql);
+  
+
+
 ?>
-
 <!DOCTYPE html>
 <html>
 
@@ -21,30 +39,35 @@ $login_name = "김찬우";
         <div class="header_inner">
             <div class="logo_area">
                 <a href="/risingproject/home.php">
-                    <div class="logo"><img src="rise_logo.png" alt="오른다 로고" width="300px" height ="120px" alt="오른다로고"></div>
+                    <div class="logo"><img src="resources/rise_logo.png" alt="오른다 로고" width="300px" height ="120px" alt="오른다로고"></div>
                 </a>
 
             </div>
             <div class="right_area">
-                <?php 
-                $login_name = "김찬우";
-            if($_SERVER['REQUEST_METHOD']=="POST" && $login_name != " "){
-                echo "{$login_name}님 환영합니다";
-                
-            }else {
-                echo 
-                '<a href="login.php">
+            <?php 
+                if($user_name != "Guest"){
+                    echo $user_name , " 님 환영합니다 ". '<form action="user/mypage.php" method="POST">
+                    <input type="submit" value="마이페이지">
+                    </form>
+                    <form action="/risingproject/user/logout_process.php" method="POST">
+                    <input type="submit" value="로그아웃">
+                    </form>'
+                    ;
+                }else{
+                    echo '
+                    <a href="/risingproject/user/login.php">
                     <span class="button">
                         로그인
                     </span>
                 </a>
-                <a href="signin.html">
+                <a href="/risingproject/user/signin.html">
                     <span class="button">
                         회원가입
                     </span>
-                </a>';
-            }
-            ?>
+                </a>
+                    ';
+                }
+                ?>
                 
             </div>
         </div>
@@ -62,14 +85,14 @@ $login_name = "김찬우";
                     <a href ="/risingproject/board_usStock.php">미국주식</a>
                 </div>
                 <div class="nav_board">
-                    <a>암호화폐</a>
+                    <a>자유게시판</a>
                 </div>
             </div>
         </nav>
     </header>
 
     <main>
-        <div>
+        <div style="margin-top : 10px;">
             주요 증시 현황
         </div>
         <section class="sc-chart">
@@ -133,68 +156,76 @@ $login_name = "김찬우";
         </section>
         <section id="sc-board">
             <section class="stock_board">
-                <div class="board_title"><span>국내주식 게시판</span></div>
+                <div class="board_title"><a href="/risingproject/board_koreaStock.php">국내주식 게시판</a></div>
                 <table>
                     <colgroup>
-                        <col style="width: 6%;">
+                          <col style="width: 4%;">
                         <col style="width: 8%;">
-
-                        <col>
-                        <col style="width: 8%;">
+                        <col style="width: 20%;">
                         <col style="width: 8%;">
                         <col style="width: 8%;">
+                        <col style="width: 4%;">
+                        <col style="width: 3%;">
+                        <col style="width: 3%;">
                     </colgroup>
                     <thead>
                         <tr>
-                            <th scope="col">번호</td>
-                            <th scope="col">종목명</td>
-                            <th scope="col">제목</td>
-                            <th scope="col">글쓴이</td>
-                            <th scope="col">작성일</td>
-                            <th scope="col">조회수</td>
+                        <th scope="col">번호</th>
+                            <th scope="col">종목명</th>
+                            <th scope="col">제목</th>
+                            <th scope="col">글쓴이</th>
+                            <th scope="col">작성일</th>
+                            <th scope="col">오를까?</th>
+                            <th scope="col">조회</th>
+                            <th scope="col">공감</th>
                         </tr>
                     </thead>
                     <tbody> 
+
+                        <?php 
+                        while($row = mysqli_fetch_array($loadPost)){
+                            ?>
+
                         <tr class="ub-content">
-                            <td>1</td>
-                            <td>종목명</td>
-                            <td>제목</td>
-                            <td>글쓴이</td>
-                            <td>작성일</td>
-                            <td>조회수</td>
+                            <td><?php
+                                 echo $row['id'];
+                                            ?></td>
+                            <td><?php
+                                                echo "<a href='https://finance.naver.com/item/main.naver?code=".$row["stockCode"]."'>";
+                                                echo $row["stockName"];
+                                                echo "</a>";
+                                                ?></td>
+                            <td><?php
+                                                echo "<a href='http://192.168.101.129/risingproject/board_koreaStock/koPost_detail.php?id=".$row["id"]."'>";
+                                                echo $row["title"];
+                                                echo "</a>";
+                                                ?></td>
+                            <td><?php
+                                                echo $row["name"];
+                                                ?></td>
+                            <td><?php
+                                                echo $row["create_time"];
+                                                ?></td>
+                            <td>
+                                            <?php
+                                                echo $row["riseSelect"];
+                                                ?>
+                            </td>
+                            <td class="table"> 
+                                            <?php
+                                                echo $row["watchCnt"];
+                                                ?>
+                            </td>
+                            <td class="table"> 
+                                            <?php
+                                                echo $row["likeCnt"];
+                                                ?>
+                            </td>
                         </tr>
-                        <tr class="ub-content">
-                            <td>2</td>
-                            <td>종목명</td>
-                            <td>제목</td>
-                            <td>글쓴이</td>
-                            <td>작성일</td>
-                            <td>조회수</td>
-                        </tr>
-                        <tr class="ub-content">
-                            <td>3</td>
-                            <td>종목명</td>
-                            <td>제목</td>
-                            <td>글쓴이</td>
-                            <td>작성일</td>
-                            <td>조회수</td>
-                        </tr>
-                        <tr class="ub-content">
-                            <td>4</td>
-                            <td>종목명</td>
-                            <td>제목</td>
-                            <td>글쓴이</td>
-                            <td>작성일</td>
-                            <td>조회수</td>
-                        </tr>
-                        <tr class="ub-content">
-                            <td>5</td>
-                            <td>종목명</td>
-                            <td>제목</td>
-                            <td>글쓴이</td>
-                            <td>작성일</td>
-                            <td>조회수</td>
-                        </tr>
+
+                        <?php
+                        }
+                        ?>
                     </tbody>
                 </table>
             </section>
@@ -264,73 +295,7 @@ $login_name = "김찬우";
                     </tbody>
                 </table>
             </section>
-            <section class="stock_board">
-                <div class="board_title"><span>암호화폐 게시판</span></div>
-                <table>
-                    <colgroup>
-                        <col style="width: 6%;">
-                        <col style="width: 8%;">
-
-                        <col>
-                        <col style="width: 8%;">
-                        <col style="width: 8%;">
-                        <col style="width: 8%;">
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th scope="col">번호</td>
-                            <th scope="col">종목명</td>
-                            <th scope="col">제목</td>
-                            <th scope="col">글쓴이</td>
-                            <th scope="col">작성일</td>
-                            <th scope="col">조회수</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="ub-content">
-                            <td>1</td>
-                            <td>종목명</td>
-                            <td>제목</td>
-                            <td>글쓴이</td>
-                            <td>작성일</td>
-                            <td>조회수</td>
-                        </tr>
-                        <tr class="ub-content">
-                            <td>2</td>
-                            <td>종목명</td>
-                            <td>제목</td>
-                            <td>글쓴이</td>
-                            <td>작성일</td>
-                            <td>조회수</td>
-                        </tr>
-                        <tr class="ub-content">
-                            <td>3</td>
-                            <td>종목명</td>
-                            <td>제목</td>
-                            <td>글쓴이</td>
-                            <td>작성일</td>
-                            <td>조회수</td>
-                        </tr>
-                        <tr class="ub-content">
-                            <td>4</td>
-                            <td>종목명</td>
-                            <td>제목</td>
-                            <td>글쓴이</td>
-                            <td>작성일</td>
-                            <td>조회수</td>
-                        </tr>
-                        <tr class="ub-content">
-                            <td>5</td>
-                            <td>종목명</td>
-                            <td>제목</td>
-                            <td>글쓴이</td>
-                            <td>작성일</td>
-                            <td>조회수</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
-        </section>
+            
     </main>
 </body>
 <footer>

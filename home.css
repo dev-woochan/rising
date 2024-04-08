@@ -102,7 +102,7 @@ body :nth-child(2n) {
     flex-direction: row;
     flex: 1;
     flex-basis: auto;
-    width: 800px;
+    width: 1000px;
     height: auto;
     padding: 2px;
     background-color: white;
@@ -157,4 +157,8 @@ a {
 
 .bottom_paging_box_iconpaging a {
     padding-left: 6px;
+}
+
+td {
+    text-align: center;
 }
